@@ -43,7 +43,7 @@ jobs:
             [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
             {
               echo "### ${{ github.event.issue.title }}"
-              echo "${{ github.event.issue.body }}"
+              echo '${{ github.event.issue.body }}'
             } > "./$DIR_NAME/$FILE_NAME"
           done
           echo "COMMIT_MESSAGE=${{ github.event.issue.title }}" >> "$GITHUB_ENV"
