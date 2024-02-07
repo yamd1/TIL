@@ -1,0 +1,75 @@
+name: Looking back TIL
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 23 * * *"
+
+env:
+  BUILD_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+jobs:
+  Concatenate:
+    name: Concatenate
+    runs-on: ubuntu-22.04
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # default is 1. but we need all history.
+          fetch-depth: 0
+
+      - name: Get the file that was committed yesterday.
+        run: | #.sh
+          echo '# yesterday' >> "$GITHUB_STEP_SUMMARY"
+          git log --date=short --format="%h" --name-only --after="$(date +'%Y-%m-%d' --date '1 day ago')T00:00:00+09:00" --before="$(date +'%Y-%m-%d' --date '0 day ago')"  | \
+          grep -oE '\S*\.[md]\S*' | sort | uniq | \
+          while read file; do
+            echo $file
+            if [ ! -e $file ]; then
+              continue
+            fi
+            {
+              cat $file
+              echo -e "\n\n\n"
+            } >> "$GITHUB_STEP_SUMMARY"
+          done
+          echo "---" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Get the file that was committed lastweek.
+        run: | #.sh
+          echo '# lastweek' >> "$GITHUB_STEP_SUMMARY"
+          git log --date=short --format="%h" --name-only --after="$(date +'%Y-%m-%d' --date '7 day ago')T00:00:00+09:00" --before="$(date +'%Y-%m-%d' --date '6 day ago')T23:59:59+09:00" | \
+          grep -oE '\S*\.[md]\S*' | sort | uniq | \
+          while read file; do
+            echo $file
+            if [ ! -e $file ]; then
+              continue
+            fi
+            {
+              cat $file
+              echo -e "\n\n\n"
+            }  >> "$GITHUB_STEP_SUMMARY"
+          done
+
+  Notice:
+    name: Notice
+    runs-on: ubuntu-22.04
+    env:
+      TZ: Asia/Tokyo
+    steps:
+      - name: Set current datetime
+        run: | #.sh
+          echo "DATETIME=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Notice
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          payload: |
+            {
+              "text": "<${{ env.BUILD_URL }}|📦${{ env.DATETIME }}: Looking back TIL.>"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

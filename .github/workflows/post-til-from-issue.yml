@@ -1,0 +1,61 @@
+name: Post TIL from issue
+
+on:
+  issues:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  Convert:
+    name: Convert
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Make tmp file
+        run: | #.sh
+          [[ -f "/tmp/labels" ]] && rm -f /tmp/labels
+          touch /tmp/labels
+
+      - name: Get Labels
+        run: | #.sh
+          echo "${{ toJson(github.event.issue.labels.*.name) }}" | \
+          sed -z 's/\n/ /g' | \
+          grep -oE '[a-zA-Z]*' | \
+          while read label ; do
+            if [ "$label" = "TIL" ] ; then
+              echo "TIL=true" >> "$GITHUB_ENV"
+            else
+              echo "$label" >> "/tmp/labels"
+            fi
+          done
+
+      - name: Issue convert to file
+        if: ${{ env.TIL }}
+        run: | #.sh
+          cat /tmp/labels | while read label ; do
+            FILE_NAME="${{ github.event.issue.title }}.md"
+            DIR_NAME=$label
+            [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
+            [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
+            {
+              echo "### ${{ github.event.issue.title }}"
+              echo "${{ github.event.issue.body }}"
+            } > "./$DIR_NAME/$FILE_NAME"
+          done
+          echo "COMMIT_MESSAGE=${{ github.event.issue.title }}" >> "$GITHUB_ENV"
+
+      - name: Commit
+        run: | #.sh
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+          git add .
+          git commit -m ":memo: ${{ env.COMMIT_MESSAGE }}"
+          git push
+
+      - name: Remove tmp file
+        run: | #.sh
+          [[ -f "/tmp/labels" ]] && rm -f /tmp/labels
