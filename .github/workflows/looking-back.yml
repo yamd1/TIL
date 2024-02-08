@@ -72,4 +72,6 @@ jobs:
               "text": "<${{ env.BUILD_URL }}|📦${{ env.DATETIME }}: Looking back TIL.>"
             }
         env:
+          SLACK_USERNAME: TIL NoticeBot
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_ICON: https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png
