@@ -14,4 +14,4 @@ bar
 # 拡張正規表現
 $ echo foobar | sed -E "s/foo(.+)/\1/g"
 bar
-``` | tr " ' 
+```

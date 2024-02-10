@@ -18,4 +18,3 @@ php -i | grep ini
 
 この様に追加iniファイルの場所が出力されるので、その配下に `hoge.ini`を配置する  
 `Scan this dir for additional .ini files => /usr/local/etc/php/conf.d`
- | tr " ' 

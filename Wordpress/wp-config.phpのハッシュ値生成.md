@@ -4,4 +4,4 @@
 <!-- ISSUEタイトルに`###`を足して、descriptionの1行目に自動追記します -->
 ランダムなハッシュを生成してくれる公式URLがある
 
-https://api.wordpress.org/secret-key/1.1/salt/ | tr " ' 
+https://api.wordpress.org/secret-key/1.1/salt/

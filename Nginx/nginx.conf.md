@@ -27,4 +27,4 @@ nginx.confの中で各設定のconfファイルをincludeする
 - https://ja.wordpress.org/support/article/nginx/
 
 TODO: リンクをnginxディレクトリに設定する  
-https://github.com/yamd1/my-wordpress   | tr " ' 
+https://github.com/yamd1/my-wordpress  
