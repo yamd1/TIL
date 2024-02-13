@@ -36,26 +36,19 @@ jobs:
       - name: Issue convert to file
         if: ${{ env.TIL }}
         run: | #.sh
-          if [ -z cat "/tmp/labels" ] ; then
-            DIR_NAME='Uncategorized'
+          cat /tmp/labels | while read label ; do
             FILE_NAME="${{ github.event.issue.title }}.md"
+            DIR_NAME=$label
+            if [ -z "$label" ] ; then
+              DIR_NAME="Uncategorized"
+            fi
+            [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
             [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
             {
               echo '### ${{ github.event.issue.title }}'
               echo '${{ github.event.issue.body }}'
             } > "./$DIR_NAME/$FILE_NAME"
-          else
-            cat /tmp/labels | while read label ; do
-              FILE_NAME="${{ github.event.issue.title }}.md"
-              DIR_NAME=$label
-              [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
-              [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
-              {
-                echo '### ${{ github.event.issue.title }}'
-                echo '${{ github.event.issue.body }}'
-              } > "./$DIR_NAME/$FILE_NAME"
-            done
-          fi
+          done
           echo "COMMIT_MESSAGE=${{ github.event.issue.title }}" >> "$GITHUB_ENV"
 
       - name: Commit
