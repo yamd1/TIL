@@ -1,0 +1,26 @@
+{
+  "fruits": [
+    {
+      "name": "apple",
+      "price": 120
+    }
+  ],
+  "meats": [
+    {
+      "name": "pork",
+      "brands": "Sangen-ton",
+      "price": 200
+    },
+    {
+      "name": "beaf",
+      "brands": "Kuroge-wagyu",
+      "price": 500
+    }
+  ],
+  "vagetables": [
+    {
+      "name": "beans",
+      "price": 100
+    }
+  ]
+}
