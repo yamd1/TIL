@@ -28,7 +28,7 @@ jobs:
           while read label ; do
             if [ "$label" = "TIL" ] ; then
               echo "TIL=true" >> "$GITHUB_ENV"
-            else
+            elif [ -n "$label" ] ; then
               echo "$label" >> "/tmp/labels"
             fi
           done
@@ -38,9 +38,9 @@ jobs:
         run: | #.sh
           cat /tmp/labels | while read label ; do
             FILE_NAME="${{ github.event.issue.title }}.md"
-            DIR_NAME=$label
+            DIR_NAME="$label"
             if [ -z "$DIR_NAME" ] ; then
-              DIR_NAME="Uncategorized"
+              DIR_NAME="UNCATEGORIZED"
             fi
             [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
             [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
