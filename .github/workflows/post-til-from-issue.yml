@@ -44,18 +44,18 @@ jobs:
               echo '### ${{ github.event.issue.title }}'
               echo '${{ github.event.issue.body }}'
             } > "./$DIR_NAME/$FILE_NAME"
+          elif
+            cat /tmp/labels | while read label ; do
+              FILE_NAME="${{ github.event.issue.title }}.md"
+              DIR_NAME=$label
+              [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
+              [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
+              {
+                echo '### ${{ github.event.issue.title }}'
+                echo '${{ github.event.issue.body }}'
+              } > "./$DIR_NAME/$FILE_NAME"
+            done
           fi
-
-          cat /tmp/labels | while read label ; do
-            FILE_NAME="${{ github.event.issue.title }}.md"
-            DIR_NAME=$label
-            [[ ! -e "$DIR_NAME" ]] && mkdir "./$DIR_NAME"
-            [[ ! -e "$FILE_NAME" ]] && touch "./$DIR_NAME/$FILE_NAME"
-            {
-              echo '### ${{ github.event.issue.title }}'
-              echo '${{ github.event.issue.body }}'
-            } > "./$DIR_NAME/$FILE_NAME"
-          done
           echo "COMMIT_MESSAGE=${{ github.event.issue.title }}" >> "$GITHUB_ENV"
 
       - name: Commit
