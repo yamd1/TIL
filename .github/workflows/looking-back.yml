@@ -24,6 +24,7 @@ jobs:
       - name: Get the file that was committed yesterday.
         run: | #.sh
           echo '# yesterday' >> "$GITHUB_STEP_SUMMARY"
+          git config --local core.quotepath false
           git log --date=short --format="%h" --name-only --after="$(date +'%Y-%m-%d' --date '1 day ago')T00:00:00+09:00" --before="$(date +'%Y-%m-%d' --date '0 day ago')"  | \
           grep -oE '\S*\.[md]\S*' | sort | uniq | \
           while read file; do
@@ -41,6 +42,7 @@ jobs:
       - name: Get the file that was committed lastweek.
         run: | #.sh
           echo '# lastweek' >> "$GITHUB_STEP_SUMMARY"
+          git config --local core.quotepath false
           git log --date=short --format="%h" --name-only --after="$(date +'%Y-%m-%d' --date '7 day ago')T00:00:00+09:00" --before="$(date +'%Y-%m-%d' --date '6 day ago')T23:59:59+09:00" | \
           grep -oE '\S*\.[md]\S*' | sort | uniq | \
           while read file; do
