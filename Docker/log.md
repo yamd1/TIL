@@ -5,7 +5,7 @@
 3. laravelはphp-fpmの子プロセスとして起動しているので、STDIOに出力してもdocker logsで出力されない
 4. php-fpmの設定(e.g. /etc/php/ini/docker.ini)[^2]でワーカープロセスのエラーをglobal.error_logにリダイレクトさせる
 5. global.error_logは`/proc/self/fd/2`[^3]は`システムのSTDIO`へのシンボリックリンクなので、これを設定するとそのプロセスが書き込める
-6. `chatch_workers_output = yes`に設定すると、子プロセスとして起動しているlaravelが親プロセスのphp-fpmのglobal.error_logに出力される
+6. `catch_workers_output = yes`に設定すると、子プロセスとして起動しているlaravelが親プロセスのphp-fpmのglobal.error_logに出力される
 
 ^1: docker-entrypoint.dist.shに"php-fpm"が引数としてわたる
 ```Dockerfile
